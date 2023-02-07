@@ -1,61 +1,76 @@
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import ip from "react-native-ip-subnet"
 import { io } from "socket.io-client";
 
+// Port on which server is listening for connections
+const PORT = 3000
 
-export class NetworkScanner {
-    ipAddress: string = [0, 0, 0, 0];
-    subnet: string = [255, 255, 255, 0];
-    firstAddress: Array<number> = [0, 0, 0, 0];
-    lastAddress: Array<number> = [0, 0, 0, 0];
+/**
+ * Function to check if there is a server on given ip address
+ * 
+ * @param ip {string} ip address to check
+ * @param setState {function} function to set state
+ * @returns {Promise<boolean>} true if server is found, false otherwise
+ * 
+ */
+async function checkIp(ip: string, setState: (callback: any) => void): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const serverUrl = `http://${ip}:${PORT}`
+        const socket = io(serverUrl)
 
-    constructor() {
-        this.init()
-    }
-
-    async init() {
-        const status = await NetInfo.fetch();
-        this.ipAddress = status.details.ipAddress
-        this.subnet = "255.255.255.255" == status.details.subnet ? "255.255.255.0" : status.details.subnet
-
-        const subnetDetails = ip.subnet(this.ipAddress, this.subnet)
-        this.firstAddress = subnetDetails.firstAddress.split(".").map((x: string) => parseInt(x))
-        this.lastAddress = subnetDetails.lastAddress.split(".").map((x: string) => parseInt(x))
-
-        this.scan()
-    }
-
-    async checkIp(ip: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            const socket = io(`http://${ip}:3000`)
-            socket.on("connect", () => {
+        socket.on("i-am-a-synced-clipboard-server", (isServer: boolean) => {
+            if (!isServer) {
                 socket.disconnect()
-                console.log("WITAM")
-                console.log(ip)
-                resolve(true)
-            })
-            socket.on("connect_error", () => {
+                reject("connect_error")
+            } else {
                 socket.disconnect()
-                reject(false)
-            })
-
-            setTimeout(() => {
-                socket.disconnect()
-                reject(false)
-            }, 30000)
+                setState((prevState: string) => [...prevState, ip])
+                resolve(ip)
+            }
         })
-    }
 
-    async scan() {
-        console.log("Scanning network...")
+        socket.on("connect_error", () => {
+            socket.disconnect()
+            reject("connect_error")
+        })
 
-        let currentAddress: Array<number> = this.firstAddress.slice()
+        setTimeout(() => {
+            socket.disconnect()
+            reject("timeout")
+        }, 30000)
+    })
+}
 
+/**
+ * Scans network for servers and sets state if server is found
+ * 
+ * @param setState {function} function to set state
+ * @returns {Promise<void>}
+ */
+export default async function scanNetworkAndSetState(setState: any) {
+    try {
+        // Fetch network details
+        const status: any = await NetInfo.fetch();
+
+        if (status.details == null || status.details.ipAddress == null || status.details.subnet == null) {
+            throw new Error("No network connection")
+        }
+
+        const ipAddress = status.details.ipAddress
+        const subnet = "255.255.255.255" == status.details.subnet ? "255.255.255.0" : status.details.subnet
+
+        // Get network range
+        const subnetDetails = ip.subnet(ipAddress, subnet)
+        let firstAddress = subnetDetails.firstAddress.split(".").map((x: string) => parseInt(x))
+        let lastAddress = subnetDetails.lastAddress.split(".").map((x: string) => parseInt(x))
+
+        // Scan network
+        let currentAddress: Array<number> = firstAddress.slice()
         let promises = []
-        while (JSON.stringify(currentAddress) !== JSON.stringify(this.lastAddress)) {
 
-            promises.push(this.checkIp(currentAddress.join(".")))
-
+        // Generate promises for each ip address in network range
+        while (JSON.stringify(currentAddress) !== JSON.stringify(lastAddress)) {
+            promises.push(checkIp(currentAddress.join("."), setState))
             currentAddress[3] += 1
 
             if (currentAddress[3] >= 255) {
@@ -74,13 +89,19 @@ export class NetworkScanner {
             }
         }
 
-        const result = await Promise.allSettled(promises)
-        result.forEach(x => {
-            if (x.status === "fulfilled" && x.value) {
-                console.log("Found server")
+        let tries = 0
+        let maxTries = 5
+        while (tries < maxTries) {
+            const results = await Promise.allSettled(promises)
+            const foundServers = results.map((result) => result.status == "fulfilled" ? 1 : 0).reduce((a, b) => a + b, 0)
+            if (foundServers > 0) {
+                return;
             }
-        })
+            tries += 1
+        }
 
-        console.log("ende")
+        throw new Error("No servers found")
+    } catch (error) {
+        console.error(error)
     }
 }

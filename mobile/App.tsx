@@ -1,13 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { NetworkScanner } from './utils/networkScanner'
+import scanNetworkAndSetState from './utils/networkScanner'
+import { useEffect, useState } from 'react';
 
 export default function App() {
-  const scanner = new NetworkScanner()
+  const [ips, setIps] = useState([])
+  useEffect(() => {
+    scanNetworkAndSetState(setIps)
+  }, [])
+
+
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
-      <Text></Text>
+      <View>
+        {ips.map(ip => <View><Text>{ip}</Text></View>)}
+      </View>
       <StatusBar style="auto" />
     </View>
   );
