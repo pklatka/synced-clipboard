@@ -91,6 +91,7 @@ export default async function scanNetworkAndSetState(setState: any) {
             }
         }
 
+        // TODO: Change this to a better solution
         setInterval(async () => { const result = await Promise.allSettled(promises) }, 30000)
 
     } catch (error) {
