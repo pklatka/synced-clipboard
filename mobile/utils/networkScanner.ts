@@ -1,9 +1,8 @@
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import ip from "react-native-ip-subnet"
 import { io } from "socket.io-client";
+import { SERVER } from "../constants/server";
 
-// Port on which server is listening for connections
-const PORT = 3000
 
 /**
  * Function to check if there is a server on given ip address
@@ -15,7 +14,7 @@ const PORT = 3000
  */
 async function checkIp(ip: string, setState: (callback: any) => void): Promise<string> {
     return new Promise((resolve, reject) => {
-        const serverUrl = `http://${ip}:${PORT}`
+        const serverUrl = `http://${ip}:${SERVER.PORT}`
         const socket = io(serverUrl)
 
         socket.on("i-am-a-synced-clipboard-server", (isServer: boolean) => {
@@ -24,7 +23,10 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
                 reject("connect_error")
             } else {
                 socket.disconnect()
-                setState((prevState: string) => [...prevState, ip])
+                setState((prevState: Array<string>) => {
+                    if (prevState.includes(ip)) return prevState
+                    return [...prevState, ip]
+                })
                 resolve(ip)
             }
         })
@@ -89,15 +91,10 @@ export default async function scanNetworkAndSetState(setState: any) {
             }
         }
 
-        let tries = 0
-        let maxTries = 5
-        while (tries < maxTries) {
+        // TODO: Change to while loop with specific condition
+        while (true) {
             const results = await Promise.allSettled(promises)
-            const foundServers = results.map((result) => result.status == "fulfilled" ? 1 : 0).reduce((a, b) => a + b, 0)
-            if (foundServers > 0) {
-                return;
-            }
-            tries += 1
+            await new Promise(resolve => setTimeout(resolve, 1000))
         }
 
         throw new Error("No servers found")
