@@ -68,7 +68,7 @@ export default async function scanNetworkAndSetState(setState: any) {
 
         // Scan network
         let currentAddress: Array<number> = firstAddress.slice()
-        let promises = []
+        let promises: any[] = []
 
         // Generate promises for each ip address in network range
         while (JSON.stringify(currentAddress) !== JSON.stringify(lastAddress)) {
@@ -91,13 +91,8 @@ export default async function scanNetworkAndSetState(setState: any) {
             }
         }
 
-        // TODO: Change to while loop with specific condition
-        while (true) {
-            const results = await Promise.allSettled(promises)
-            await new Promise(resolve => setTimeout(resolve, 1000))
-        }
+        setInterval(async () => { const result = await Promise.allSettled(promises) }, 30000)
 
-        throw new Error("No servers found")
     } catch (error) {
         console.error(error)
     }
