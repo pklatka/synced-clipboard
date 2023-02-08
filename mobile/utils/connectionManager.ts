@@ -1,4 +1,4 @@
-import { SERVER } from '../constants/server'
+import { SERVER } from '../enums/server'
 import { Socket, io } from 'socket.io-client'
 import { saveContentToClipboard } from './clipboardManager'
 

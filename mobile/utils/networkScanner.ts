@@ -1,7 +1,7 @@
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import ip from "react-native-ip-subnet"
 import { io } from "socket.io-client";
-import { SERVER } from "../constants/server";
+import { SERVER } from "../enums/server";
 
 
 /**

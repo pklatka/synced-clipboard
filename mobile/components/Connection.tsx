@@ -29,7 +29,6 @@ export default function Connection({ navigation, route }) {
 
         })
 
-        console.log("AGAIN")
         // Connect to server
         connection = new ConnectionManager(route.params.ip)
         connection.create().then(() => {

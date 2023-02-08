@@ -1,5 +1,5 @@
 import Main from "./components/Main";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Connection from './components/Connection';
 
@@ -12,7 +12,9 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={Main}
-          options={{ title: 'Looking for servers...' }}
+          options={{
+            title: 'Looking for servers...'
+          }}
         />
         <Stack.Screen name="Connection" component={Connection} />
       </Stack.Navigator>
