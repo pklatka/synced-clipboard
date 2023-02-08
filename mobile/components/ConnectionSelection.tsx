@@ -3,12 +3,9 @@ import scanNetworkAndSetState from "../utils/networkScanner";
 import { useEffect, useState } from 'react';
 import ServerListItem from "./ServerListItem";
 import ImageButton from "./ImageButton";
+import { ConnectionSelectionProps } from "../types/rootStackParamList";
 
-interface ConnectionSelectionProps {
-    navigation: any // TODO: Change this to a proper type
-}
-
-export default function ConnectionSelection({ navigation }: ConnectionSelectionProps) {
+export default function ConnectionSelection({ navigation }: ConnectionSelectionProps): JSX.Element {
     const [ips, setIps] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -37,7 +34,7 @@ export default function ConnectionSelection({ navigation }: ConnectionSelectionP
 
     return (
         <View style={styles.container}>
-            {ips.length > 0 && ips.map(ip => <ServerListItem key={ip} navigation={navigation} ip={ip} />)}
+            {ips.length > 0 && ips.map(ip => <ServerListItem key={ip} onPressAction={() => { navigation.navigate("ConnectionView", { ip }) }} ip={ip} />)}
             {ips.length === 0 && (loading ? <ActivityIndicator size={70} color="#000000" /> : <Text style={styles.text}>No servers found.{"\n"}Press reload button to retry.</Text>)}
         </View>
     );

@@ -11,7 +11,7 @@ export default class ConnectionManager {
         this.url = `http://${ip}:${SERVER.PORT}`
     }
 
-    async create() {
+    async create(): Promise<string> {
         return new Promise((resolve, reject) => {
             const socket = io(this.url)
 
@@ -41,7 +41,7 @@ export default class ConnectionManager {
         })
     }
 
-    async refresh() {
+    async refresh(): Promise<void> {
         if (!this.socket.connected) {
             this.create()
         }
@@ -56,19 +56,19 @@ export default class ConnectionManager {
         return false
     }
 
-    createListener(event: string, callback: (...args: any[]) => void) {
+    createListener(event: string, callback: (...args: any[]) => void): void {
         if (this.socket) {
             this.socket.on(event, callback)
         }
     }
 
-    removeListener(event: string, callback: (...args: any[]) => void) {
+    removeListener(event: string, callback: (...args: any[]) => void): void {
         if (this.socket) {
             this.socket.off(event, callback)
         }
     }
 
-    async emit(event: string, data: any) {
+    async emit(event: string, data: any): Promise<void> {
         await this.refresh()
         if (this.socket) {
             this.socket.emit(event, data)

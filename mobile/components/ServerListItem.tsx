@@ -1,14 +1,14 @@
 import { Text, TouchableHighlight, View, StyleSheet, Image } from "react-native";
 
-interface ServerItemProps {
-    navigation: any // TODO: Change this to a proper type
+type ServerItemProps = {
+    onPressAction: () => void,
     ip: string
 }
 
-export default function ServerListItem({ navigation, ip }: ServerItemProps) {
+export default function ServerListItem({ onPressAction, ip }: ServerItemProps): JSX.Element {
     return (
         <TouchableHighlight underlayColor='none'
-            onPress={() => { navigation.navigate("Connection", { ip }) }}>
+            onPress={onPressAction}>
             <View style={styles.container}>
                 <Text style={styles.text}>{ip}</Text>
                 <Image

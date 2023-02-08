@@ -60,13 +60,13 @@ export async function getContentFromClipboard(socket: Socket, executedByUser: bo
     }
 }
 
-export function startClipboardInterval(connection: ConnectionManager) {
+export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
         await getContentFromClipboard(connection.socket);
     }, 10000);
 }
 
-export function stopClipboardInterval() {
+export function stopClipboardInterval(): void {
     clearInterval(clipboardInterval);
 }

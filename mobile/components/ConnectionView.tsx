@@ -3,15 +3,11 @@ import { View, Text, StyleSheet, Alert, AppState } from "react-native";
 import ConnectionManager from "../utils/connectionManager";
 import { getContentFromClipboard, startClipboardInterval, stopClipboardInterval } from "../utils/clipboardManager";
 import ImageButton from "./ImageButton";
+import { ConnectionViewProps } from "../types/rootStackParamList";
 
 let connectionView: ConnectionManager;
 
-interface ConnectionProps {
-    navigation: any;
-    route: any;
-}
-
-export default function ConnectionView({ navigation, route }: ConnectionProps) {
+export default function ConnectionView({ navigation, route }: ConnectionViewProps): JSX.Element {
     // Refresh connectionView when app comes to foreground
     const appState = useRef(AppState.currentState);
 

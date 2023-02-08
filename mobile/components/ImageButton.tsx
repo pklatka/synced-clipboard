@@ -1,6 +1,6 @@
 import { TouchableOpacity, Image, ViewStyle, Text, View, StyleSheet } from "react-native";
 
-interface ImageButtonProps {
+type ImageButtonProps = {
     onPressAction: () => void;
     source: any;
     size?: number;
@@ -8,7 +8,7 @@ interface ImageButtonProps {
     title?: string;
 }
 
-export default function ImageButton({ onPressAction, source, style, size = 25, title = "" }: ImageButtonProps) {
+export default function ImageButton({ onPressAction, source, style, size = 25, title = "" }: ImageButtonProps): JSX.Element {
     return (
         <View style={style}>
             <TouchableOpacity style={styles.container} onPress={onPressAction}>

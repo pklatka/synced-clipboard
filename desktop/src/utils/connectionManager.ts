@@ -1,6 +1,6 @@
 import { Socket, io } from 'socket.io-client'
 import { saveContentToClipboard } from './clipboardManager'
-import { SERVER } from '../config/server'
+import { SERVER } from '../enums/server'
 import { ClipboardContentData } from '../interfaces/clipboardContentData'
 import { CONNECTION_STATUS } from '../enums/connectionStatus'
 

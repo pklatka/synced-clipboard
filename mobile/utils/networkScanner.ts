@@ -1,14 +1,14 @@
-import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
 import ip from "react-native-ip-subnet"
 import { io } from "socket.io-client";
 import { SERVER } from "../enums/server";
-
+import { CONNECTION_STATUS } from "../enums/connectionStatus";
 
 /**
  * Function to check if there is a server on given ip address
  * 
  * @param ip {string} ip address to check
- * @param setState {function} function to set state
+ * @param setState {(callback: any) => void} function to set state
  * @returns {Promise<boolean>} true if server is found, false otherwise
  * 
  */
@@ -20,7 +20,7 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
         socket.on("i-am-a-synced-clipboard-server", (isServer: boolean) => {
             if (!isServer) {
                 socket.disconnect()
-                reject("connect_error")
+                reject(CONNECTION_STATUS.ERROR)
             } else {
                 socket.disconnect()
                 setState((prevState: Array<string>) => {
@@ -33,12 +33,12 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
 
         socket.on("connect_error", () => {
             socket.disconnect()
-            reject("connect_error")
+            reject(CONNECTION_STATUS.ERROR)
         })
 
         setTimeout(() => {
             socket.disconnect()
-            reject("timeout")
+            reject(CONNECTION_STATUS.TIMEOUT)
         }, 30000)
     })
 }
@@ -46,10 +46,10 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
 /**
  * Scans network for servers and sets state if server is found
  * 
- * @param setState {function} function to set state
+ * @param setState {(callback: any) => void} function to set state
  * @returns {Promise<void>}
  */
-export default async function scanNetworkAndSetState(setState: any) {
+export default async function scanNetworkAndSetState(setState: (callback: any) => void) {
     try {
         // Fetch network details
         const status: any = await NetInfo.fetch();

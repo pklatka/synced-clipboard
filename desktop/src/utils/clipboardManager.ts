@@ -27,21 +27,21 @@ export async function saveContentToClipboard(data: ClipboardContentData): Promis
 
 }
 
-export async function getContentFromClipboard(socket: Socket): Promise<{ content: string, type: string }> {
+export async function getContentFromClipboard(socket: Socket): Promise<ClipboardContentData> {
     try {
         const image = clipboard.readImage()
         const imageBase64 = image.toPNG().toString('base64')
         const text = clipboard.readText()
-        let clipboardContent = "", contentType = "";
+        let clipboardContent = "", contentType = CLIPBOARD_CONTET_TYPE.UNDEFINED;
 
         if (imageBase64) {
-            socket.emit("set-clipboard-content", { content: imageBase64, type: "image" });
             clipboardContent = imageBase64;
-            contentType = "image";
+            contentType = CLIPBOARD_CONTET_TYPE.IMAGE;
+            socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
         } else if (text) {
-            socket.emit("set-clipboard-content", { content: text, type: "plain-text" });
             clipboardContent = text;
-            contentType = "plain-text";
+            contentType = CLIPBOARD_CONTET_TYPE.PLAIN_TEXT;
+            socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
         }
 
         return { content: clipboardContent, type: contentType }
@@ -50,13 +50,13 @@ export async function getContentFromClipboard(socket: Socket): Promise<{ content
     }
 }
 
-export function startClipboardInterval(connection: ConnectionManager) {
+export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
         await getContentFromClipboard(connection.socket);
     }, 3000);
 }
 
-export function stopClipboardInterval() {
+export function stopClipboardInterval(): void {
     clearInterval(clipboardInterval);
 }
