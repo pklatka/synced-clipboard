@@ -5,7 +5,7 @@ interface ServerItemProps {
     ip: string
 }
 
-export default function ServerItem({ navigation, ip }: ServerItemProps) {
+export default function ServerListItem({ navigation, ip }: ServerItemProps) {
     return (
         <TouchableHighlight underlayColor='none'
             onPress={() => { navigation.navigate("Connection", { ip }) }}>

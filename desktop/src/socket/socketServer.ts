@@ -10,21 +10,20 @@ const io = new Server(httpServer, {
 let data = { content: "", type: "" }
 
 io.on('connection', socket => {
+    console.log("Client has connected")
     socket.emit('i-am-a-synced-clipboard-server', true);
 
     socket.on('set-clipboard-content', ({ content, type }) => {
         // Emit to all sockets
         if (JSON.stringify(data) === JSON.stringify({ content, type })) {
-            return
+            return;
         }
 
         data = { content, type };
-        console.log(data)
-        io.emit('set-clipboard-content', { content, type });
+        socket.broadcast.emit('set-clipboard-content', { content, type });
     })
 
     socket.on('get-clipboard-content', () => {
-        console.log(data)
         socket.emit('set-clipboard-content', data);
     })
 

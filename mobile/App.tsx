@@ -1,7 +1,7 @@
-import Main from "./components/Main";
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Connection from './components/Connection';
+import ConnectionSelection from "./components/ConnectionSelection";
+import ConnectionView from "./components/ConnectionView";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,12 +11,14 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen
           name="Home"
-          component={Main}
+          component={ConnectionSelection}
           options={{
             title: 'Synced clipboard'
           }}
         />
-        <Stack.Screen name="Connection" component={Connection} />
+        <Stack.Screen name="Connection" component={ConnectionView} options={{
+          title: "Synced clipboard"
+          }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

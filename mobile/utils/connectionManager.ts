@@ -1,15 +1,11 @@
 import { SERVER } from '../enums/server'
 import { Socket, io } from 'socket.io-client'
 import { saveContentToClipboard } from './clipboardManager'
-
-interface ClipboardContentData {
-    content: string
-    type: string
-}
+import { ClipboardContentData } from '../interfaces/clipboardContentData'
 
 export default class ConnectionManager {
     url: string
-    socket: Socket
+    socket!: Socket
 
     constructor(ip: string) {
         this.url = `http://${ip}:${SERVER.PORT}`
@@ -30,8 +26,7 @@ export default class ConnectionManager {
             })
 
             socket.on('set-clipboard-content', (data: ClipboardContentData) => {
-                console.log("Setting clipboard content")
-                saveContentToClipboard(data.content, data.type)
+                saveContentToClipboard(data)
             })
 
             socket.on('connect_error', () => {
@@ -46,7 +41,7 @@ export default class ConnectionManager {
         })
     }
 
-    async refreshConnection() {
+    async refresh() {
         if (!this.socket.connected) {
             this.create()
         }
@@ -74,7 +69,7 @@ export default class ConnectionManager {
     }
 
     async emit(event: string, data: any) {
-        await this.refreshConnection()
+        await this.refresh()
         if (this.socket) {
             this.socket.emit(event, data)
         }
