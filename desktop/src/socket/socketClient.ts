@@ -1,5 +1,5 @@
-import { startClipboardInterval } from "./clipboardManager";
-import ConnectionManager from "./connectionManager";
+import { startClipboardInterval } from "../utils/clipboardManager";
+import ConnectionManager from "../utils/connectionManager";
 
 const createClientConnection = async () => {
     try {
@@ -7,9 +7,8 @@ const createClientConnection = async () => {
         await connectionManager.create();
 
         startClipboardInterval(connectionManager);
-        console.log(connectionManager.socket.connected)
     } catch (err) {
-        console.log(err)
+        throw new Error(err);
     }
 }
 

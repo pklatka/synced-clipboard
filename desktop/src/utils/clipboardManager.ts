@@ -1,25 +1,30 @@
 import { clipboard, nativeImage } from 'electron';
 import { Socket } from 'socket.io-client';
 import ConnectionManager from './connectionManager';
+import { CLIPBOARD_CONTET_TYPE } from '../enums/clipboardContentType';
+import { ClipboardContentData } from '../interfaces/clipboardContentData';
 
 let clipboardInterval: string | number | NodeJS.Timer;
 
-export async function saveContentToClipboard(content: string, type: string): Promise<boolean> {
-    try {
-        if (type == 'image') {
-            content = content.replace(/^data:image\/png;base64,/, "");
-            const image = nativeImage.createFromBuffer(Buffer.from(content, 'base64'));
-            clipboard.writeImage(image);
-            return true;
-        } else if (type == 'plain-text') {
-            clipboard.writeText(content);
-            return true;
-        }
+export async function saveContentToClipboard(data: ClipboardContentData): Promise<string> {
+    return new Promise((resolve, reject) => {
+        try {
+            if (data.type == CLIPBOARD_CONTET_TYPE.IMAGE) {
+                const content = data.content.replace(/^data:image\/png;base64,/, "");
+                const image = nativeImage.createFromBuffer(Buffer.from(content, 'base64'));
+                clipboard.writeImage(image);
+                resolve('OK')
+            } else if (data.type == CLIPBOARD_CONTET_TYPE.PLAIN_TEXT) {
+                clipboard.writeText(data.content);
+                resolve('OK')
+            }
 
-        return false;
-    } catch (error) {
-        return false;
-    }
+            reject("Invalid clipboard content type")
+        } catch (error) {
+            reject(error)
+        }
+    })
+
 }
 
 export async function getContentFromClipboard(socket: Socket): Promise<{ content: string, type: string }> {
@@ -47,7 +52,7 @@ export async function getContentFromClipboard(socket: Socket): Promise<{ content
 
 export function startClipboardInterval(connection: ConnectionManager) {
     clipboardInterval = setInterval(async () => {
-        connection.refreshConnection();
+        connection.refresh();
         await getContentFromClipboard(connection.socket);
     }, 3000);
 }

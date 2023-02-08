@@ -1,53 +1,54 @@
 import { Socket, io } from 'socket.io-client'
 import { saveContentToClipboard } from './clipboardManager'
-
-interface ClipboardContentData {
-    content: string
-    type: string
-}
+import { SERVER } from '../config/server'
+import { ClipboardContentData } from '../interfaces/clipboardContentData'
+import { CONNECTION_STATUS } from '../enums/connectionStatus'
 
 export default class ConnectionManager {
     url: string
     socket: Socket
 
     constructor() {
-        this.url = 'http://localhost:21370'
+        this.url = `http://localhost:${SERVER.PORT}`
     }
 
-    async create() {
+    async create(): Promise<string> {
         return new Promise((resolve, reject) => {
             const socket = io(this.url)
 
             socket.on('i-am-a-synced-clipboard-server', (isServer: boolean) => {
                 if (!isServer) {
                     socket.disconnect()
-                    reject('connect_error')
+                    reject(CONNECTION_STATUS.ERROR)
                 } else {
                     this.socket = socket
                     resolve(this.url)
                 }
             })
 
-            socket.on('set-clipboard-content', (data: ClipboardContentData) => {
-                console.log("Setting clipboard content")
-                saveContentToClipboard(data.content, data.type)
+            socket.on('set-clipboard-content', async (data: ClipboardContentData) => {
+                saveContentToClipboard(data)
             })
 
             socket.on('connect_error', () => {
                 socket.disconnect()
-                reject('connect_error')
+                reject(CONNECTION_STATUS.ERROR)
             })
 
             setTimeout(() => {
                 socket.disconnect()
-                reject('timeout')
+                reject(CONNECTION_STATUS.TIMEOUT)
             }, 30000)
         })
     }
 
-    async refreshConnection() {
-        if (!this.socket.connected) {
-            this.create()
+    async refresh(): Promise<void> {
+        try {
+            if (!this.socket.connected) {
+                await this.create()
+            }
+        } catch (error) {
+            console.error("Refresh status: ", error)
         }
     }
 
@@ -60,20 +61,20 @@ export default class ConnectionManager {
         return false
     }
 
-    createListener(event: string, callback: (...args: any[]) => void) {
+    createListener(event: string, callback: (...args: any[]) => void): void {
         if (this.socket) {
             this.socket.on(event, callback)
         }
     }
 
-    removeListener(event: string, callback: (...args: any[]) => void) {
+    removeListener(event: string, callback: (...args: any[]) => void): void {
         if (this.socket) {
             this.socket.off(event, callback)
         }
     }
 
-    async emit(event: string, data: any) {
-        await this.refreshConnection()
+    async emit(event: string, data: any): Promise<void> {
+        await this.refresh()
         if (this.socket) {
             this.socket.emit(event, data)
         }

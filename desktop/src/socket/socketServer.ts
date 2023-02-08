@@ -1,12 +1,12 @@
 import { createServer } from 'http';
 import { Server } from "socket.io";
+import { SERVER } from "../config/server";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
     maxHttpBufferSize: 1e8 // 100 MB
 });
 
-const PORT = 21370;
 let data = { content: "", type: "" }
 
 io.on('connection', socket => {
@@ -33,6 +33,6 @@ io.on('connection', socket => {
     });
 });
 
-httpServer.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}!`);
+httpServer.listen(SERVER.PORT, () => {
+    console.log(`Listening on port ${SERVER.PORT}!`);
 });

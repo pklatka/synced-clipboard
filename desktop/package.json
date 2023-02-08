@@ -1,8 +1,8 @@
 {
-  "name": "desktop3",
-  "productName": "desktop3",
+  "name": "synced-clipboard-desktop",
+  "productName": "Synced clipboard",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Synced clipboard desktop app.",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
