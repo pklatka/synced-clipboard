@@ -37,10 +37,8 @@ export default function Main({ navigation }: MainProps) {
 
     return (
         <View style={styles.container}>
-            <View>
-                {ips.length > 0 && ips.map(ip => <ServerItem key={ip} navigation={navigation} ip={ip} />)}
-                {ips.length === 0 && (loading ? <ActivityIndicator size={70} color="#000000" /> : <Text style={styles.text}>No servers found.{"\n"}Press reload button to retry.</Text>)}
-            </View>
+            {ips.length > 0 && ips.map(ip => <ServerItem key={ip} navigation={navigation} ip={ip} />)}
+            {ips.length === 0 && (loading ? <ActivityIndicator size={70} color="#000000" /> : <Text style={styles.text}>No servers found.{"\n"}Press reload button to retry.</Text>)}
         </View>
     );
 }
@@ -50,8 +48,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'column',
+        padding: 20
     },
     text: {
         fontSize: 20,

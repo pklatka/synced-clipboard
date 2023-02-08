@@ -13,7 +13,7 @@ export default function App() {
           name="Home"
           component={Main}
           options={{
-            title: 'Looking for servers...'
+            title: 'Synced clipboard'
           }}
         />
         <Stack.Screen name="Connection" component={Connection} />
