@@ -1,12 +1,12 @@
-const { createServer } = require('http');
-const { Server } = require("socket.io");
+import { createServer } from 'http';
+import { Server } from "socket.io";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
     maxHttpBufferSize: 1e8 // 100 MB
 });
 
-const PORT = 3000;
+const PORT = 21370;
 let data = { content: "", type: "" }
 
 io.on('connection', socket => {
@@ -14,6 +14,10 @@ io.on('connection', socket => {
 
     socket.on('set-clipboard-content', ({ content, type }) => {
         // Emit to all sockets
+        if (JSON.stringify(data) === JSON.stringify({ content, type })) {
+            return
+        }
+
         data = { content, type };
         console.log(data)
         io.emit('set-clipboard-content', { content, type });

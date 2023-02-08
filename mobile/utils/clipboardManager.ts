@@ -2,7 +2,6 @@ import * as Clipboard from 'expo-clipboard';
 import { Socket } from 'socket.io-client';
 import ConnectionManager from './connectionManager';
 
-let lastClipboardContent: string = "";
 let clipboardInterval: string | number | NodeJS.Timer | undefined;
 
 export async function saveContentToClipboard(content: string, type: string): Promise<boolean> {
@@ -34,18 +33,12 @@ export async function getContentFromClipboard(socket: Socket) {
             clipboardContent = image?.data == undefined ? "" : image.data;
             clipboardContent = clipboardContent.replace(/^data:image\/png;base64,/, "");
             contentType = Clipboard.ContentType.IMAGE;
-            if (lastClipboardContent != clipboardContent) {
-                socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
-            }
-            lastClipboardContent = clipboardContent;
+            socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
         } else if (hasString) {
             const string = await Clipboard.getStringAsync();
             clipboardContent = string;
             contentType = Clipboard.ContentType.PLAIN_TEXT;
-            if (lastClipboardContent != clipboardContent) {
-                socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
-            }
-            lastClipboardContent = clipboardContent;
+            socket.emit("set-clipboard-content", { content: clipboardContent, type: contentType });
         }
 
         return { content: clipboardContent, type: contentType }
