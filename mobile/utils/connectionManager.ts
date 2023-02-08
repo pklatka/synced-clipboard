@@ -1,15 +1,21 @@
 import { SERVER } from '../constants/server'
-import { io } from 'socket.io-client'
+import { Socket, io } from 'socket.io-client'
+import { saveContentToClipboard } from './clipboardManager'
+
+interface ClipboardContentData {
+    content: string
+    type: string
+}
 
 export default class ConnectionManager {
     url: string
-    socket: any = null
+    socket: Socket
 
     constructor(ip: string) {
         this.url = `http://${ip}:${SERVER.PORT}`
     }
 
-    async createConnection() {
+    async create() {
         return new Promise((resolve, reject) => {
             const socket = io(this.url)
 
@@ -21,6 +27,11 @@ export default class ConnectionManager {
                     this.socket = socket
                     resolve(this.url)
                 }
+            })
+
+            socket.on('set-clipboard-content', (data: ClipboardContentData) => {
+                console.log("Setting clipboard content")
+                saveContentToClipboard(data.content, data.type)
             })
 
             socket.on('connect_error', () => {
@@ -35,7 +46,13 @@ export default class ConnectionManager {
         })
     }
 
-    disconnect(): boolean {
+    async refreshConnection() {
+        if (!this.socket.connected) {
+            this.create()
+        }
+    }
+
+    close(): boolean {
         if (this.socket) {
             this.socket.disconnect()
             return true
@@ -44,19 +61,20 @@ export default class ConnectionManager {
         return false
     }
 
-    createListener(event: string, callback: Function) {
+    createListener(event: string, callback: (...args: any[]) => void) {
         if (this.socket) {
             this.socket.on(event, callback)
         }
     }
 
-    removeListener(event: string, callback: Function) {
+    removeListener(event: string, callback: (...args: any[]) => void) {
         if (this.socket) {
             this.socket.off(event, callback)
         }
     }
 
-    emit(event: string, data: any) {
+    async emit(event: string, data: any) {
+        await this.refreshConnection()
         if (this.socket) {
             this.socket.emit(event, data)
         }

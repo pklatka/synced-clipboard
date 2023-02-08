@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, Button } from "react-native";
+import ConnectionManager from "../utils/connectionManager";
+import { getContentFromClipboard, startClipboardInterval, stopClipboardInterval } from "../utils/clipboardManager";
+
+let connection: ConnectionManager;
 
 export default function Connection({ navigation, route }) {
     useEffect(() => {
@@ -15,8 +19,8 @@ export default function Connection({ navigation, route }) {
                         text: 'Disconnect',
                         style: 'destructive',
                         onPress: () => {
-                            // TODO: Disconnect from server
-
+                            connection.close()
+                            stopClipboardInterval()
                             navigation.dispatch(e.data.action)
                         },
                     },
@@ -24,12 +28,34 @@ export default function Connection({ navigation, route }) {
             );
 
         })
+
+        console.log("AGAIN")
+        // Connect to server
+        connection = new ConnectionManager(route.params.ip)
+        connection.create().then(() => {
+            // Run clipboard interval
+            startClipboardInterval(connection)
+        }).catch((error) => {
+            console.error(error)
+        })
+
     }, [])
 
 
     return (
         <View style={styles.container}>
             <Text>Connection {route.params.ip}</Text>
+            <Button onPress={() => { connection.emit('get-clipboard-content', null) }}
+                title="Get clipboard"
+                color="#841584"
+                accessibilityLabel="Learn more about this purple button"
+            />
+
+            <Button onPress={() => { getContentFromClipboard(connection.socket) }}
+                title="Set clipboard"
+                color="#841584"
+                accessibilityLabel="Learn more about this purple button"
+            />
         </View>
     )
 }

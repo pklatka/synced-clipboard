@@ -1,3 +1,3 @@
-export const SERVER = {
-    PORT: 3000
+export enum SERVER {
+    PORT = 3000
 }
