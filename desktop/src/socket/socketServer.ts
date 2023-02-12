@@ -8,9 +8,19 @@ const io = new Server(httpServer, {
 });
 
 let data = { content: "", type: "" }
+const clientList: Set<string> = new Set()
+
+export const getClientList = () => {
+    return Array.from(clientList);
+}
 
 io.on('connection', socket => {
     console.log("Client has connected")
+    const clientIp = socket.conn.remoteAddress.replace('::ffff:', '')
+    if (clientIp !== '::1' && clientIp !== '') {
+        clientList.add(clientIp)
+    }
+
     socket.emit('i-am-a-synced-clipboard-server', true);
 
     socket.on('set-clipboard-content', ({ content, type }) => {
@@ -29,6 +39,7 @@ io.on('connection', socket => {
 
     socket.on('disconnect', function () {
         console.log("Client has disconnected")
+        clientList.delete(clientIp)
     });
 });
 
