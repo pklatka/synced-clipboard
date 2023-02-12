@@ -21,6 +21,7 @@ export default class ConnectionManager {
                     reject('connect_error')
                 } else {
                     this.socket = socket
+                    socket.emit('client-connected')
                     resolve(this.url)
                 }
             })

@@ -17,11 +17,14 @@ export const getClientList = () => {
 io.on('connection', socket => {
     console.log("Client has connected")
     const clientIp = socket.conn.remoteAddress.replace('::ffff:', '')
-    if (clientIp !== '::1' && clientIp !== '') {
-        clientList.add(clientIp)
-    }
 
     socket.emit('i-am-a-synced-clipboard-server', true);
+
+    socket.on('client-connected', () => {
+        if (clientIp !== '::1' && clientIp !== '') {
+            clientList.add(clientIp)
+        }
+    })
 
     socket.on('set-clipboard-content', ({ content, type }) => {
         // Emit to all sockets
