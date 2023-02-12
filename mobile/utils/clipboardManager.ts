@@ -64,7 +64,7 @@ export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
         await getContentFromClipboard(connection.socket);
-    }, 10000);
+    }, 5000);
 }
 
 export function stopClipboardInterval(): void {

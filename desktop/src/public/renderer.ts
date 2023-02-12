@@ -5,14 +5,18 @@
  * to expose Node.js functionality from the main process.
  */
 
-const clientListElement = document.getElementById('client-list')
+document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('server-address').innerHTML = await window.electronAPI.getLocalIPAddress()
 
-setInterval(async () => {
-    const clientList: Array<string> = await window.electronAPI.getClientList()
-    if (clientList.length <= 0) {
-        clientListElement.innerHTML = `<div class="client">No clients connected</div>`
-        return;
-    }
+    const clientListElement = document.getElementById('client-list')
 
-    clientListElement.innerHTML = clientList.map(client => `<div class="client">${client}</div>`).join('')
-}, 3000)
+    setInterval(async () => {
+        const clientList: Array<string> = await window.electronAPI.getClientList()
+        if (clientList.length <= 0) {
+            clientListElement.innerHTML = `<div class="client">No clients connected</div>`
+            return;
+        }
+
+        clientListElement.innerHTML = clientList.map(client => `<div class="client">${client}</div>`).join('')
+    }, 3000)
+})
