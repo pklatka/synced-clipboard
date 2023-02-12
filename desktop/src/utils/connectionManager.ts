@@ -16,7 +16,7 @@ export default class ConnectionManager {
         return new Promise((resolve, reject) => {
             const socket = io(this.url)
 
-            socket.on('i-am-a-synced-clipboard-server', (isServer: boolean) => {
+            socket.on('client-authorization', (isServer: boolean) => {
                 if (!isServer) {
                     socket.disconnect()
                     reject(CONNECTION_STATUS.ERROR)

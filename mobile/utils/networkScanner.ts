@@ -17,7 +17,7 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
         const serverUrl = `http://${ip}:${SERVER.PORT}`
         const socket = io(serverUrl)
 
-        socket.on("i-am-a-synced-clipboard-server", (isServer: boolean) => {
+        socket.on("client-authorization", (isServer: boolean) => {
             if (!isServer) {
                 socket.disconnect()
                 reject(CONNECTION_STATUS.ERROR)

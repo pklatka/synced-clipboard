@@ -18,7 +18,7 @@ io.on('connection', socket => {
     console.log("Client has connected")
     const clientIp = socket.conn.remoteAddress.replace('::ffff:', '')
 
-    socket.emit('i-am-a-synced-clipboard-server', true);
+    socket.emit('client-authorization', true);
 
     socket.on('client-connected', () => {
         if (clientIp !== '::1' && clientIp !== '') {
