@@ -18,7 +18,6 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', socket => {
-    console.log("Client has connected")
     const clientIp = socket.conn.remoteAddress.replace('::ffff:', '')
 
     socket.emit('client-authorization', true);
@@ -44,7 +43,6 @@ io.on('connection', socket => {
     })
 
     socket.on('disconnect', function () {
-        console.log("Client has disconnected")
         clientList.delete(clientIp)
     });
 });

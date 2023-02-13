@@ -82,7 +82,7 @@ export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
         await getContentFromClipboard(connection.socket);
-    }, 5000);
+    }, 3000);
 }
 
 /**
