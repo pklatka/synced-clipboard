@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import scanNetworkAndSetState from "../utils/networkScanner";
 import { useEffect, useState } from 'react';
 import ServerListItem from "./ServerListItem";
-import ImageButton from "./ImageButton";
 import { ConnectionSelectionProps } from "../types/rootStackParamList";
-
+import { FontAwesome } from '@expo/vector-icons';
 /**
  * Component representing the screen where the user can select a server to connect to.
  */
@@ -18,12 +17,14 @@ export default function ConnectionSelection({ navigation }: ConnectionSelectionP
         // Set the header right button.
         navigation.setOptions({
             headerRight: () => (
-                <ImageButton onPressAction={async () => {
+                <TouchableOpacity onPress={async () => {
                     setLoading(true)
                     setIps([])
                     await scanNetworkAndSetState(setIps)
                     setLoading(false)
-                }} source={require('../assets/refresh-icon.png')} />
+                }}>
+                    <FontAwesome name="refresh" size={28} color="black" />
+                </TouchableOpacity>
             ),
         });
 

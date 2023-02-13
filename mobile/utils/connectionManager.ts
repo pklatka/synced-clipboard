@@ -2,6 +2,7 @@ import { SERVER } from '../enums/server'
 import { Socket, io } from 'socket.io-client'
 import { saveContentToClipboard } from './clipboardManager'
 import { ClipboardContentData } from '../types/clipboardContentData'
+import { CONNECTION_STATUS } from '../enums/connectionStatus'
 
 /**
  * Class that manages connection to server.
@@ -30,7 +31,7 @@ export default class ConnectionManager {
             socket.on('client-authorization', (isServer: boolean) => {
                 if (!isServer) {
                     socket.disconnect()
-                    reject('connect_error')
+                    reject(CONNECTION_STATUS.ERROR)
                 } else {
                     this.socket = socket
                     socket.emit('client-connected')
@@ -44,12 +45,12 @@ export default class ConnectionManager {
 
             socket.on('connect_error', () => {
                 socket.disconnect()
-                reject('connect_error')
+                reject(CONNECTION_STATUS.ERROR)
             })
 
             setTimeout(() => {
                 socket.disconnect()
-                reject('timeout')
+                reject(CONNECTION_STATUS.TIMEOUT)
             }, 30000)
         })
     }

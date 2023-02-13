@@ -1,4 +1,5 @@
 import { Text, TouchableHighlight, View, StyleSheet, Image } from "react-native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type ServerItemProps = {
     onPressAction: () => void,
@@ -17,10 +18,7 @@ export default function ServerListItem({ onPressAction, ip }: ServerItemProps): 
             onPress={onPressAction}>
             <View style={styles.container}>
                 <Text style={styles.text}>{ip}</Text>
-                <Image
-                    style={{ width: 50, height: 50, resizeMode: 'contain' }}
-                    source={require('../assets/cloud-server-icon.png')}
-                />
+                <MaterialCommunityIcons name="server-network" size={50} color="black" />
             </View>
         </TouchableHighlight>
     )

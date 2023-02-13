@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Alert, AppState } from "react-native";
+import { View, Text, StyleSheet, Alert, AppState, TouchableOpacity } from "react-native";
 import ConnectionManager from "../utils/connectionManager";
 import { getContentFromClipboard, startClipboardInterval, stopClipboardInterval } from "../utils/clipboardManager";
-import ImageButton from "./ImageButton";
 import { ConnectionViewProps } from "../types/rootStackParamList";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 /**
  * Component representing the screen where the user can interact with the server.
@@ -72,8 +72,14 @@ export default function ConnectionView({ navigation, route }: ConnectionViewProp
         <View style={styles.container}>
             <Text style={styles.text}>Connection with server:{"\n"}{route.params.ip}</Text>
             <View style={styles.buttonContainer}>
-                <ImageButton style={styles.imageButton} size={40} onPressAction={() => { connectionView.emit('get-clipboard-content', null) }} source={require('../assets/file-download-icon.png')} title={"Get clipboard"} />
-                <ImageButton style={styles.imageButton} size={40} onPressAction={() => { getContentFromClipboard(connectionView.socket, true); }} source={require('../assets/upload-file-icon.png')} title={"Save clipboard"} />
+                <TouchableOpacity style={styles.button} onPress={() => { connectionView.emit('get-clipboard-content', null) }}>
+                    <MaterialCommunityIcons name="file-download-outline" size={50} color="black" />
+                    <Text>Get clipboard</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { getContentFromClipboard(connectionView.socket, true) }}>
+                    <MaterialCommunityIcons name="file-upload-outline" size={50} color="black" />
+                    <Text>Save clipboard</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -92,9 +98,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '70%',
     },
-    imageButton: {
+    button: {
         marginLeft: 30,
-        marginRight: 30
+        marginRight: 30,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+
     },
     text: {
         fontSize: 26,
