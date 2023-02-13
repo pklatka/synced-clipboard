@@ -5,6 +5,5 @@ import ip from "ip";
  * @returns {string} The local IP address
  */
 export const getLocalIPAddress = (): string => {
-    console.log(ip.address());
     return ip.address();
 }
