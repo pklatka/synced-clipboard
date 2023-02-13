@@ -1,12 +1,18 @@
 import * as Clipboard from 'expo-clipboard';
 import { Socket } from 'socket.io-client';
 import ConnectionManager from './connectionManager';
-import { ClipboardContentData } from '../interfaces/clipboardContentData';
+import { ClipboardContentData } from '../types/clipboardContentData';
 import { CLIPBOARD_CONTET_TYPE } from '../enums/clipboardContentType';
 
 let clipboardInterval: string | number | NodeJS.Timer | undefined;
 let previousClipboardContent: string = "";
 
+/**
+ * Saves content to clipboard.
+ * 
+ * @param data Clipboard content data.
+ * @returns True if content was saved successfully, false otherwise.
+ */
 export async function saveContentToClipboard(data: ClipboardContentData): Promise<boolean> {
     try {
         if (data.type == CLIPBOARD_CONTET_TYPE.IMAGE) {
@@ -25,6 +31,13 @@ export async function saveContentToClipboard(data: ClipboardContentData): Promis
     }
 }
 
+/**
+ * Gets content from clipboard.
+ * 
+ * @param socket Socket.
+ * @param executedByUser True if function was executed by user (not by interval for example), false otherwise.
+ * @returns Clipboard content data.
+ */
 export async function getContentFromClipboard(socket: Socket, executedByUser: boolean = false): Promise<ClipboardContentData> {
     try {
         const hasImage: boolean = await Clipboard.hasImageAsync();
@@ -60,6 +73,11 @@ export async function getContentFromClipboard(socket: Socket, executedByUser: bo
     }
 }
 
+/**
+ * Starts clipboard interval.
+ * 
+ * @param connection Connection manager.
+ */
 export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
@@ -67,6 +85,9 @@ export function startClipboardInterval(connection: ConnectionManager): void {
     }, 5000);
 }
 
+/**
+ * Stops clipboard interval.
+ */
 export function stopClipboardInterval(): void {
     clearInterval(clipboardInterval);
 }

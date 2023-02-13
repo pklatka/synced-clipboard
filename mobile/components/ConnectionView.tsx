@@ -5,12 +5,14 @@ import { getContentFromClipboard, startClipboardInterval, stopClipboardInterval 
 import ImageButton from "./ImageButton";
 import { ConnectionViewProps } from "../types/rootStackParamList";
 
-let connectionView: ConnectionManager;
-
+/**
+ * Component representing the screen where the user can interact with the server.
+ */
 export default function ConnectionView({ navigation, route }: ConnectionViewProps): JSX.Element {
-    // Refresh connectionView when app comes to foreground
-    const appState = useRef(AppState.currentState);
+    let connectionView: ConnectionManager;
 
+    // Refresh connectionView when app comes to foreground.
+    const appState = useRef(AppState.currentState);
     useEffect(() => {
         const subscription = AppState.addEventListener('change', async nextAppState => {
             try {
@@ -32,7 +34,7 @@ export default function ConnectionView({ navigation, route }: ConnectionViewProp
         };
     }, []);
 
-
+    // Add listener to beforeRemove event.
     useEffect(() => {
         navigation.addListener('beforeRemove', (e: any) => {
             e.preventDefault()
@@ -53,13 +55,13 @@ export default function ConnectionView({ navigation, route }: ConnectionViewProp
                     },
                 ]
             );
-
         })
+    }, [])
 
-        // Connect to server
+    // Connect to server.
+    useEffect(() => {
         connectionView = new ConnectionManager(route.params.ip)
         connectionView.create().then(() => {
-            // Run clipboard interval
             startClipboardInterval(connectionView)
         }).catch((error) => {
             console.error(error)
@@ -71,9 +73,7 @@ export default function ConnectionView({ navigation, route }: ConnectionViewProp
             <Text style={styles.text}>Connection with server:{"\n"}{route.params.ip}</Text>
             <View style={styles.buttonContainer}>
                 <ImageButton style={styles.imageButton} size={40} onPressAction={() => { connectionView.emit('get-clipboard-content', null) }} source={require('../assets/file-download-icon.png')} title={"Get clipboard"} />
-
                 <ImageButton style={styles.imageButton} size={40} onPressAction={() => { getContentFromClipboard(connectionView.socket, true); }} source={require('../assets/upload-file-icon.png')} title={"Save clipboard"} />
-
             </View>
         </View>
     )

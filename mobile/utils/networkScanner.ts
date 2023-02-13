@@ -5,12 +5,11 @@ import { SERVER } from "../enums/server";
 import { CONNECTION_STATUS } from "../enums/connectionStatus";
 
 /**
- * Function to check if there is a server on given ip address
+ * Function to check if there is a server on given ip address.
  * 
- * @param ip {string} ip address to check
- * @param setState {(callback: any) => void} function to set state
- * @returns {Promise<boolean>} true if server is found, false otherwise
- * 
+ * @param ip {string} ip address to check.
+ * @param setState {(callback: any) => void} function to set state.
+ * @returns {Promise<boolean>} true if server is found, false otherwise.
  */
 async function checkIp(ip: string, setState: (callback: any) => void): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -44,14 +43,14 @@ async function checkIp(ip: string, setState: (callback: any) => void): Promise<s
 }
 
 /**
- * Scans network for servers and sets state if server is found
+ * Scans network for servers and sets state if server is found.
  * 
- * @param setState {(callback: any) => void} function to set state
+ * @param setState {(callback: any) => void} function to set state.
  * @returns {Promise<void>}
  */
 export default async function scanNetworkAndSetState(setState: (callback: any) => void) {
     try {
-        // Fetch network details
+        // Fetch network details.
         const status: any = await NetInfo.fetch();
 
         if (status.details == null || status.details.ipAddress == null || status.details.subnet == null) {
@@ -59,18 +58,19 @@ export default async function scanNetworkAndSetState(setState: (callback: any) =
         }
 
         const ipAddress = status.details.ipAddress
+        // Sometimes react-native-ip-subnet returns wrong subnet mask, so default mask is used if it happens. 
         const subnet = "255.255.255.255" == status.details.subnet ? "255.255.255.0" : status.details.subnet
 
-        // Get network range
+        // Get network range.
         const subnetDetails = ip.subnet(ipAddress, subnet)
         let firstAddress = subnetDetails.firstAddress.split(".").map((x: string) => parseInt(x))
         let lastAddress = subnetDetails.lastAddress.split(".").map((x: string) => parseInt(x))
 
-        // Scan network
+        // Scan network.
         let currentAddress: Array<number> = firstAddress.slice()
         let promises: any[] = []
 
-        // Generate promises for each ip address in network range
+        // Generate promises for each ip address in network range.
         while (JSON.stringify(currentAddress) !== JSON.stringify(lastAddress)) {
             promises.push(checkIp(currentAddress.join("."), setState))
             currentAddress[3] += 1
@@ -91,7 +91,7 @@ export default async function scanNetworkAndSetState(setState: (callback: any) =
             }
         }
 
-        // Wait for all promises to resolve
+        // Wait for all promises to resolve.
         await Promise.allSettled(promises)
     } catch (error) {
         console.error(error)

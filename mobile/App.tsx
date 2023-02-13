@@ -6,6 +6,9 @@ import { RootStackParamList } from './types/rootStackParamList';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+/**
+ * The main app component.
+ */
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>

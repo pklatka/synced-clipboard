@@ -5,6 +5,12 @@ type ServerItemProps = {
     ip: string
 }
 
+/**
+ * A list item that displays an ip and a cloud icon.
+ * 
+ * @param onPressAction The function to call when the item is pressed.
+ * @param ip The ip of the server.
+ */
 export default function ServerListItem({ onPressAction, ip }: ServerItemProps): JSX.Element {
     return (
         <TouchableHighlight underlayColor='none'

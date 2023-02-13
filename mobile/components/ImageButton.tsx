@@ -8,6 +8,15 @@ type ImageButtonProps = {
     title?: string;
 }
 
+/**
+ *  A button that displays an image and an optional title.
+ * 
+ * @param onPressAction The function to call when the button is pressed.
+ * @param source The image to display.
+ * @param style The style of the button.
+ * @param size The size of the image (optional).
+ * @param title The title of the button (optional).
+ */
 export default function ImageButton({ onPressAction, source, style, size = 25, title = "" }: ImageButtonProps): JSX.Element {
     return (
         <View style={style}>

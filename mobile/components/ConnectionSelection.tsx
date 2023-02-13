@@ -5,12 +5,17 @@ import ServerListItem from "./ServerListItem";
 import ImageButton from "./ImageButton";
 import { ConnectionSelectionProps } from "../types/rootStackParamList";
 
+/**
+ * Component representing the screen where the user can select a server to connect to.
+ */
 export default function ConnectionSelection({ navigation }: ConnectionSelectionProps): JSX.Element {
+    // List of ips of servers found on the network.
     const [ips, setIps] = useState([])
+    // Whether the component is loading.
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Set the header right button
+        // Set the header right button.
         navigation.setOptions({
             headerRight: () => (
                 <ImageButton onPressAction={async () => {
