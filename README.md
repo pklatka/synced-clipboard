@@ -7,3 +7,5 @@ Cross-platform synchronized clipboard.
 3. Everything works in local network, so you don't need to turn on bluetooth or have internet connection 😎
 4. Supported platforms: IOS, Android, MacOSX, Windows and Linux.
 
+## Notes
+1. To sync clipboard, mobile app instance has to run in foreground, right now background sync is not supported.
