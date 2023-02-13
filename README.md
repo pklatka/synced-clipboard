@@ -9,3 +9,4 @@ Cross-platform synchronized clipboard.
 
 ## Notes
 1. To sync clipboard, mobile app instance has to run in foreground, right now background sync is not supported.
+2. Android and MacOS builds are available on the [releases page](https://github.com/pklatka/synced-clipboard/releases), if you need a build for another platform, let me know.
