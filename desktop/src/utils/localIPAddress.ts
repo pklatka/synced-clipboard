@@ -1,6 +1,10 @@
 import ip from "ip";
 
-export const getLocalIPAddress = () => {
+/**
+ * Get the local IP address of the machine
+ * @returns {string} The local IP address
+ */
+export const getLocalIPAddress = (): string => {
     console.log(ip.address());
     return ip.address();
 }

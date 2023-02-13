@@ -2,17 +2,20 @@ import { createServer } from 'http';
 import { Server } from "socket.io";
 import { SERVER } from "../enums/server";
 
+// Global variables.
+let data = { content: "", type: "" }
+const clientList: Set<string> = new Set()
+
+// Exported functions.
+export const getClientList = () => {
+    return Array.from(clientList);
+}
+
+// Socket server.
 const httpServer = createServer();
 const io = new Server(httpServer, {
     maxHttpBufferSize: 1e8 // 100 MB
 });
-
-let data = { content: "", type: "" }
-const clientList: Set<string> = new Set()
-
-export const getClientList = () => {
-    return Array.from(clientList);
-}
 
 io.on('connection', socket => {
     console.log("Client has connected")
@@ -27,7 +30,7 @@ io.on('connection', socket => {
     })
 
     socket.on('set-clipboard-content', ({ content, type }) => {
-        // Emit to all sockets
+        // Emit to all sockets.
         if (JSON.stringify(data) === JSON.stringify({ content, type })) {
             return;
         }

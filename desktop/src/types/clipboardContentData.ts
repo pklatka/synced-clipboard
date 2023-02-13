@@ -1,6 +1,6 @@
 import { CLIPBOARD_CONTET_TYPE } from "../enums/clipboardContentType"
 
-export interface ClipboardContentData {
+export type ClipboardContentData = {
     content: string
     type: CLIPBOARD_CONTET_TYPE
 }

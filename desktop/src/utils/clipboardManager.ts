@@ -2,31 +2,44 @@ import { clipboard, nativeImage } from 'electron';
 import { Socket } from 'socket.io-client';
 import ConnectionManager from './connectionManager';
 import { CLIPBOARD_CONTET_TYPE } from '../enums/clipboardContentType';
-import { ClipboardContentData } from '../interfaces/clipboardContentData';
+import { ClipboardContentData } from '../types/clipboardContentData';
 
 let clipboardInterval: string | number | NodeJS.Timer;
 
-export async function saveContentToClipboard(data: ClipboardContentData): Promise<string> {
+/**
+ * Saves content to clipboard.
+ * 
+ * @param data Clipboard content data.
+ * @returns Promise<boolean> Returns true if content is saved to clipboard.
+ */
+export async function saveContentToClipboard(data: ClipboardContentData): Promise<boolean> {
     return new Promise((resolve, reject) => {
         try {
             if (data.type == CLIPBOARD_CONTET_TYPE.IMAGE) {
                 const content = data.content.replace(/^data:image\/png;base64,/, "");
                 const image = nativeImage.createFromBuffer(Buffer.from(content, 'base64'));
                 clipboard.writeImage(image);
-                resolve('OK')
+                resolve(true)
             } else if (data.type == CLIPBOARD_CONTET_TYPE.PLAIN_TEXT) {
                 clipboard.writeText(data.content);
-                resolve('OK')
+                resolve(true)
             }
 
-            reject("Invalid clipboard content type")
+            console.error("Clipboard content type is not supported.")
+            reject(false)
         } catch (error) {
-            reject(error)
+            reject(false)
         }
     })
 
 }
 
+/**
+ * Gets content from clipboard.
+ * 
+ * @param socket Socket connection.
+ * @returns Promise<ClipboardContentData> Returns clipboard content data.
+ */
 export async function getContentFromClipboard(socket: Socket): Promise<ClipboardContentData> {
     try {
         const image = clipboard.readImage()
@@ -50,6 +63,11 @@ export async function getContentFromClipboard(socket: Socket): Promise<Clipboard
     }
 }
 
+/**
+ * Starts clipboard interval.
+ * 
+ * @param connection Connection manager.
+ */
 export function startClipboardInterval(connection: ConnectionManager): void {
     clipboardInterval = setInterval(async () => {
         connection.refresh();
@@ -57,6 +75,9 @@ export function startClipboardInterval(connection: ConnectionManager): void {
     }, 3000);
 }
 
+/**
+ * Stops clipboard interval.
+ */
 export function stopClipboardInterval(): void {
     clearInterval(clipboardInterval);
 }

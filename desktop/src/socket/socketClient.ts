@@ -1,6 +1,9 @@
 import { startClipboardInterval } from "../utils/clipboardManager";
 import ConnectionManager from "../utils/connectionManager";
 
+/**
+ * Creates client connection.
+ */
 const createClientConnection = async () => {
     try {
         const connectionManager = new ConnectionManager();
@@ -12,4 +15,12 @@ const createClientConnection = async () => {
     }
 }
 
-createClientConnection()
+// Initialize client connection.
+do {
+    try {
+        createClientConnection();
+        break;
+    } catch (error) {
+        console.error(error);
+    }
+} while (true)
