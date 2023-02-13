@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import ServerListItem from "./ServerListItem";
 import { ConnectionSelectionProps } from "../types/rootStackParamList";
 import { FontAwesome } from '@expo/vector-icons';
+
 /**
  * Component representing the screen where the user can select a server to connect to.
  */
@@ -23,12 +24,14 @@ export default function ConnectionSelection({ navigation }: ConnectionSelectionP
                     await scanNetworkAndSetState(setIps)
                     setLoading(false)
                 }}>
-                    <FontAwesome name="refresh" size={28} color="black" />
+                    <FontAwesome name="refresh" size={30} color="black" />
                 </TouchableOpacity>
             ),
         });
 
         async function startScanningNetwork() {
+            setLoading(true)
+            setIps([])
             await scanNetworkAndSetState(setIps)
             setLoading(false)
         }

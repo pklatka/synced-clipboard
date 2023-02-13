@@ -14,9 +14,9 @@ type ServerItemProps = {
  */
 export default function ServerListItem({ onPressAction, ip }: ServerItemProps): JSX.Element {
     return (
-        <TouchableHighlight underlayColor='none'
+        <TouchableHighlight style={styles.container} underlayColor='none'
             onPress={onPressAction}>
-            <View style={styles.container}>
+            <View style={styles.innerContainer}>
                 <Text style={styles.text}>{ip}</Text>
                 <MaterialCommunityIcons name="server-network" size={50} color="black" />
             </View>
@@ -26,7 +26,11 @@ export default function ServerListItem({ onPressAction, ip }: ServerItemProps): 
 
 const styles = StyleSheet.create({
     container: {
-        alignSelf: 'stretch',
+        alignItems: 'center',
+    },
+    innerContainer: {
+        maxWidth: 450,
+        width: '100%',
         marginBottom: 13,
         borderRadius: 10,
         padding: 10,
